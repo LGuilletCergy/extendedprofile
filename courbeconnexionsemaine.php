@@ -77,7 +77,7 @@ if (id == $USER->id || has_capability('local/extendedprofile:viewinfo', $context
         $listlogins->close();
 
         $yaxis[] = round($durationonday/60);
-        $xaxis[] = date("m-d", $timestampatmidnight);
+        $xaxis[] = date("d/m", $timestampatmidnight);
 
         $endperiod = $timestampatmidnight;
         $timestampatmidnight = $timestampatmidnight - 24 * 3600;
