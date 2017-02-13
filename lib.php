@@ -17,9 +17,78 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
 
     if (isloggedin()) {
 
-        global $DB, $CFG, $USER;
+        global $DB, $CFG, $USER, $OUTPUT, $SITE;
 
         $context = context_system::instance();
+
+        $categorycontactinfo = new core_user\output\myprofile\category('contactinfo',
+                    get_string('contactinfo', 'local_extendedprofile'), 'contact');
+        $tree->add_category($categorycontactinfo);
+
+        $pictureheight = 100;
+        $userpicture = $OUTPUT->user_picture($user,
+                array('size'=>$pictureheight, 'alttext'=>false, 'link'=>false));
+        $picturearray = explode('"', $userpicture);
+        $pictureurl = $picturearray[1];
+
+        $image = "<img src =  $pictureurl />";
+        $name = get_string('name', 'local_extendedprofile')." : $user->lastname";
+        $firstname = get_string('firstname', 'local_extendedprofile')." : $user->firstname";
+        $mail = get_string('mail', 'local_extendedprofile')." : $user->email";
+        $login = get_string('login', 'local_extendedprofile')." : $user->username";
+        // Ne l'afficher que si utilisateur ou admin
+        $editprofile = get_string('editprofile', 'local_extendedprofile');
+        $urleditprofile = new moodle_url('editadvanced.php',
+                array('id' => $user->id, 'course' => $SITE->id, 'returnto' => 'profile'));
+        $idnumber = get_string('idnumber', 'local_extendedprofile')." : $user->idnumber";
+
+
+        $nodeimage = new core_user\output\myprofile\node('contactinfo', 'image', $image, null, null, null, null);
+        $nodename = new core_user\output\myprofile\node('contactinfo', 'name', $name);
+        $nodefirstname = new core_user\output\myprofile\node('contactinfo', 'firstname', $firstname);
+        $nodemail = new core_user\output\myprofile\node('contactinfo', 'mail', $mail);
+        $nodelogin = new core_user\output\myprofile\node('contactinfo', 'login', $login);
+        $nodeeditprofile = new core_user\output\myprofile\node('contactinfo', 'editprofile',
+                $editprofile, 'login', $urleditprofile);
+        $nodeidnumber = new core_user\output\myprofile\node('contactinfo', 'idnumber', $idnumber);
+
+        $categorycontactinfo->add_node($nodeimage);
+        $categorycontactinfo->add_node($nodename);
+        $categorycontactinfo->add_node($nodefirstname);
+        $categorycontactinfo->add_node($nodemail);
+        $categorycontactinfo->add_node($nodelogin);
+        if ($user->id == $USER->id || is_siteadmin($USER->id)) {
+            $categorycontactinfo->add_node($nodeeditprofile);
+        }
+
+        if (strstr($user->email, '@etu.u-cergy.fr') != FALSE) {
+
+            $categorycontactinfo->add_node($nodeidnumber);
+
+            $listvets = $DB->get_records('student_vet', array('studentid' => $user->id));
+            $nbrevets = 0;
+
+            $listvetsstring = get_string('listvets', 'local_extendedprofile')." : ";
+
+            foreach ($listvets as $vet) {
+
+
+                $category = $DB->get_record('course_categories', array('id' => $vet->categoryid));
+
+                $listvetsstring .= "<br>&nbsp&nbsp&nbsp&nbsp$category->name";
+
+                $nbrevets++;
+            }
+
+            if ($nbrevets == 0) {
+
+                $listvetsstring .= get_string('novet', 'local_extendedprofile');
+            }
+
+            $nodelistvets = new core_user\output\myprofile\node('contactinfo', 'listvets', $listvetsstring,
+                    'idnumber', null, null);
+            $categorycontactinfo->add_node($nodelistvets);
+        }
 
         if ($user->id == $USER->id || has_capability('local/extendedprofile:viewinfo', $context)) {
 
