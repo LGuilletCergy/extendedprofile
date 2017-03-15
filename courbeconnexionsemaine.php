@@ -1,10 +1,30 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Create the connexion graph.
+ *
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('../../config.php');
-include ("jpgraph-3.5.0b1/src/jpgraph.php");
-include ("jpgraph-3.5.0b1/src/jpgraph_bar.php");
-include ("jpgraph-3.5.0b1/src/jpgraph_line.php");
-include ("jpgraph-3.5.0b1/src/jpgraph_error.php");
+require_once("jpgraph-3.5.0b1/src/jpgraph.php");
+require_once("jpgraph-3.5.0b1/src/jpgraph_bar.php");
+require_once("jpgraph-3.5.0b1/src/jpgraph_line.php");
+require_once("jpgraph-3.5.0b1/src/jpgraph_error.php");
 
 $xaxis = array();
 $yaxis = array();
@@ -15,7 +35,7 @@ global $USER;
 
 $context = context_system::instance();
 
-if (id == $USER->id || has_capability('local/extendedprofile:viewinfo', $context)) {
+if ($id == $USER->id || has_capability('local/extendedprofile:viewinfo', $context)) {
 
     $xaxis = array();
     $yaxis = array();
@@ -76,7 +96,7 @@ if (id == $USER->id || has_capability('local/extendedprofile:viewinfo', $context
 
         $listlogins->close();
 
-        $yaxis[] = round($durationonday/60);
+        $yaxis[] = round($durationonday / 60);
         $xaxis[] = date("d/m", $timestampatmidnight);
 
         $endperiod = $timestampatmidnight;
@@ -88,17 +108,17 @@ if (id == $USER->id || has_capability('local/extendedprofile:viewinfo', $context
 
     for ($i = 0; $i < 7; $i++) {
 
-        $orderedxaxis[$i] = $xaxis[6-$i];
-        $orderedyaxis[$i] = $yaxis[6-$i];
+        $orderedxaxis[$i] = $xaxis[6 - $i];
+        $orderedyaxis[$i] = $yaxis[6 - $i];
     }
 
 
-    $graph = new Graph(450,400);
-    $graph->img->SetMargin(40,0,40,40);
+    $graph = new Graph(450, 400);
+    $graph->img->SetMargin(40, 0, 40, 40);
     $graph->img->SetAntiAliasing();
     $graph->SetScale("textlin");
     $graph->SetShadow();
-    $graph->title->SetFont(FF_FONT1,FS_BOLD);
+    $graph->title->SetFont(FF_FONT1, FS_BOLD);
 
     $graph->yscale->SetGrace(0);
 
