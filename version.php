@@ -22,7 +22,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2017013100;
+$plugin->version   = 2017032900;
 $plugin->release   = '0.0.1';
 $plugin->requires  = 2014051200; // Moodle 2.7 release and upwards.
 $plugin->component = 'local_extendedprofile';
