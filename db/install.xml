@@ -9,6 +9,7 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" NEXT="typeteacher"/>
                 <FIELD NAME="typeteacher" TYPE="text" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+            </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
