@@ -73,18 +73,30 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
         $nodetypeteacher = new core_user\output\myprofile\node('contactinfo', 'typeteacher',
                 $typeteacherstring);
 
-        $categorycontactinfo->add_node($nodename);
-        $categorycontactinfo->add_node($nodefirstname);
-        $categorycontactinfo->add_node($nodemail);
-        $categorycontactinfo->add_node($nodelogin);
+        if (!isset($categorycontactinfo->nodes[$nodename->name])) {
+            $categorycontactinfo->add_node($nodename);
+        }
+        if (!isset($categorycontactinfo->nodes[$nodefirstname->name])) {
+            $categorycontactinfo->add_node($nodefirstname);
+        }
+        if (!isset($categorycontactinfo->nodes[$nodemail->name])) {
+            $categorycontactinfo->add_node($nodemail);
+        }
+        if (!isset($categorycontactinfo->nodes[$nodelogin->name])) {
+            $categorycontactinfo->add_node($nodelogin);
+        }
         if ($DB->record_exists('teacher_type', array('userid' => $user->id))) {
 
-            $categorycontactinfo->add_node($nodetypeteacher);
+            if (!isset($categorycontactinfo->nodes[$nodetypeteacher->name])) {
+                $categorycontactinfo->add_node($nodetypeteacher);
+            }
         }
 
         if (strstr($user->email, '@etu.u-cergy.fr') != false) {
 
-            $categorycontactinfo->add_node($nodeidnumber);
+            if (!isset($categorycontactinfo->nodes[$nodeidnumber->name])) {
+                $categorycontactinfo->add_node($nodeidnumber);
+            }
 
             $listvets = $DB->get_records('student_vet', array('studentid' => $user->id));
             $nbrevets = 0;
@@ -107,7 +119,9 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
 
             $nodelistvets = new core_user\output\myprofile\node('contactinfo', 'listvets', $listvetsstring,
                     'idnumber', null, null);
-            $categorycontactinfo->add_node($nodelistvets);
+            if (!isset($categorycontactinfo->nodes[$nodelistvets->name])) {
+                $categorycontactinfo->add_node($nodelistvets);
+            }
         }
 
         $categoryadministration = new core_user\output\myprofile\category('newadministration',
@@ -120,7 +134,9 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
             $title = get_string('preferences', 'moodle');
             $node = new core_user\output\myprofile\node('newadministration', 'newpreferences', $title,
                     null, $url);
-            $tree->add_node($node);
+            if (!isset($tree->nodes[$node->name])) {
+                $tree->add_node($node);
+            }
         }
 
         if (!$user->deleted && $user->id != $USER->id &&
@@ -133,7 +149,9 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
                     array('id' => $courseid, 'user' => $user->id, 'sesskey' => sesskey()));
             $node = new  core_user\output\myprofile\node('newadministration', 'newloginas', get_string('loginas'),
                     null, $url);
-            $tree->add_node($node);
+            if (!isset($tree->nodes[$node->name])) {
+                $tree->add_node($node);
+            }
         }
 
         if ($user->id == $USER->id || has_capability('local/extendedprofile:viewinfo', $context)) {
@@ -150,7 +168,7 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
             $sqlcateg = "SELECT distinct c.category, z.name FROM mdl_user u, mdl_role_assignments r,"
                     . " mdl_context cx, mdl_course c, mdl_course_categories z"
                     . " WHERE u.id = r.userid AND r.contextid = cx.id AND cx.instanceid = c.id AND"
-                    . " cx.contextlevel =50 AND c.category = z.id AND u.id =$user->id";
+                    . " cx.contextlevel =50 AND c.category = z.id AND u.id =$user->id AND z.path NOT LIKE '/396/%'";
             $resultcateg = $DB->get_recordset_sql($sqlcateg);
             foreach ($resultcateg as $categ) {
                 $courseteachedcontent = "";
@@ -214,13 +232,17 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
 
                     $nodeteachedcourse = new core_user\output\myprofile\node('teachedcourses',
                             $coursename, $coursestring, null, null, $courseteachedcontent);
-                    $categoryteachedcourses->add_node($nodeteachedcourse);
+                    if (!isset($categoryteachedcourses->nodes[$nodeteachedcourse->name])) {
+                        $categoryteachedcourses->add_node($nodeteachedcourse);
+                    }
                 }
                 if ($hasstudentroleincategory) {
 
                     $nodefollowedcourse = new core_user\output\myprofile\node('followedcourses',
                             $coursename, $coursestring, null, null, $coursefollowedcontent);
-                    $categoryfollowedcourses->add_node($nodefollowedcourse);
+                    if (!isset($categoryfollowedcourses->nodes[$nodefollowedcourse->name])) {
+                        $categoryfollowedcourses->add_node($nodefollowedcourse);
+                    }
                 }
             }
 
@@ -236,7 +258,9 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
             $graphnode = new core_user\output\myprofile\node('logingraph',
                             'graph', "<img src=$courbeurl>");
 
-            $categorylogingraph->add_node($graphnode);
+            if (!isset($categorylogingraph->nodes[$graphnode->name])) {
+                $categorylogingraph->add_node($graphnode);
+            }
 
             // A n'afficher que si c'est utile.
 
@@ -513,7 +537,9 @@ function local_extendedprofile_myprofile_navigation (core_user\output\myprofile\
 
                 $tablenode = new core_user\output\myprofile\node('tablecourses',
                     "Tableau", $tablecontent);
-                $categorytablecourses->add_node($tablenode);
+                if (!isset($categorytablecourses->nodes[$tablenode->name])) {
+                    $categorytablecourses->add_node($tablenode);
+                }
             }
 
             $resultcourseetudiant->close();
